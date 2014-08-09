@@ -67,10 +67,11 @@ class AdminCustomersControllerCore extends AdminController
 
 		$this->_select = '
 		a.date_add, gl.name as title, (
-			SELECT SUM(total_paid_real / conversion_rate) FROM '._DB_PREFIX_.'orders o
+			SELECT SUM(total_paid_real / conversion_rate)
+			FROM '._DB_PREFIX_.'orders o
 			WHERE o.id_customer = a.id_customer
 			'.Shop::addSqlRestriction(Shop::SHARE_ORDER, 'o').'
-			AND a.active = 1
+			AND o.valid = 1
 		) as total_spent, (
 			SELECT c.date_add FROM '._DB_PREFIX_.'guest g
 			LEFT JOIN '._DB_PREFIX_.'connections c ON c.id_guest = g.id_guest
@@ -756,6 +757,8 @@ class AdminCustomersControllerCore extends AdminController
 			$interested[$i]['name'] = Tools::htmlentitiesUTF8($product->name);
 		}
 
+		$emails = $customer->getLastEmails();
+
 		$connections = $customer->getLastConnections();
 		if (!is_array($connections))
 			$connections = array();
@@ -807,6 +810,8 @@ class AdminCustomersControllerCore extends AdminController
 			'carts' => $carts,
 			// Interested
 			'interested' => $interested,
+			// Emails
+			'emails' => $emails,
 			// Connections
 			'connections' => $connections,
 			// Referrers

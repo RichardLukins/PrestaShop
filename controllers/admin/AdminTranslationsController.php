@@ -270,7 +270,11 @@ class AdminTranslationsControllerCore extends AdminController
 	protected function writeTranslationFile($override_file = false)
 	{
 		$type = Tools::toCamelCase($this->type_selected, true);
-		$translation_informations = $this->translations_informations[$this->type_selected];
+		
+		if (isset($this->translations_informations[$this->type_selected]))
+			$translation_informations = $this->translations_informations[$this->type_selected];
+		else
+			return;
 
 		if ($override_file)
 			$file_path = $translation_informations['override']['dir'].$translation_informations['override']['file'];
@@ -446,7 +450,7 @@ class AdminTranslationsControllerCore extends AdminController
 			if (!mkdir($dir, 0777, true))
 				throw new PrestaShopException('The file '.$dir.' cannot be created.');
 		if (!file_put_contents($path, $content))
-				throw new PrestaShopException('File "'.$path.'" doesn\'t exists and cannot be created in '.$dir);
+				throw new PrestaShopException('File "'.$path.'" doesn not exist and cannot be created in '.$dir);
 		if (!is_writable($path))
 			$this->displayWarning(sprintf(Tools::displayError('This file must be writable: %s'), $path));
 	}
@@ -909,7 +913,7 @@ class AdminTranslationsControllerCore extends AdminController
 				file_put_contents($file_name, '');
 			if (!is_writable($file_name))
 				throw new PrestaShopException(sprintf(
-					Tools::displayError('Cannot write to the theme\'s language file (%s). Please check write permissions.'),
+					Tools::displayError('Cannot write to the theme\'s language file (%s). Please check writing permissions.'),
 					$file_name
 				));
 
